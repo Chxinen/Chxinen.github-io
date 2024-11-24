@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>【未解决】通过删除隐藏内核模块条目、kobject之后卸载模块 | Chxinen</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="问题：如何实现自卸载解决方案错误：delete_module123456&#x2F;&#x2F;错误代码，返回-14，sys_delete_module应通过syscall调用int (*delete_module)(const char *, int)     &#x3D; (void *)kallsyms_lookup_name(&quot;sys_delete_module&quot;);ret &#x3D; delete_mod">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【未解决】通过删除隐藏内核模块条目、kobject之后卸载模块">
+<meta property="og:url" content="http://example.com/2024/11/23/Linux-Kernel_lab1/index.html">
+<meta property="og:site_name" content="Chxinen">
+<meta property="og:description" content="问题：如何实现自卸载解决方案错误：delete_module123456&#x2F;&#x2F;错误代码，返回-14，sys_delete_module应通过syscall调用int (*delete_module)(const char *, int)     &#x3D; (void *)kallsyms_lookup_name(&quot;sys_delete_module&quot;);ret &#x3D; delete_mod">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/css/img/linux_kernel/1732417517047.png">
+<meta property="og:image" content="http://example.com/css/img/linux_kernel/1732422746808.png">
+<meta property="og:image" content="http://example.com/css/img/linux_kernel/1732440039947.png">
+<meta property="article:published_time" content="2024-11-23T00:44:33.000Z">
+<meta property="article:modified_time" content="2024-11-24T09:43:57.450Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Linux Kernel -version 4.4.0">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/css/img/linux_kernel/1732417517047.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Chxinen" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Chxinen</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Linux-Kernel_lab1" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2024/11/23/Linux-Kernel_lab1/" class="article-date">
+  <time class="dt-published" datetime="2024-11-23T00:44:33.000Z" itemprop="datePublished">2024-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      【未解决】通过删除隐藏内核模块条目、kobject之后卸载模块
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="问题：如何实现自卸载"><a href="#问题：如何实现自卸载" class="headerlink" title="问题：如何实现自卸载"></a>问题：如何实现自卸载</h1><h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><h4 id="错误：delete-module"><a href="#错误：delete-module" class="headerlink" title="错误：delete_module"></a>错误：delete_module</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//错误代码，返回-14，sys_delete_module应通过syscall调用</span></span><br><span class="line"><span class="type">int</span> (*delete_module)(<span class="type">const</span> <span class="type">char</span> *, <span class="type">int</span>) </span><br><span class="line">    = (<span class="type">void</span> *)kallsyms_lookup_name(<span class="string">&quot;sys_delete_module&quot;</span>);</span><br><span class="line">ret = delete_module(THIS_MODULE-&gt;name, O_NONBLOCK | O_EXCL);</span><br><span class="line"><span class="keyword">if</span> (ret != <span class="number">0</span>) &#123;printk(KERN_ERR <span class="string">&quot;Failed to delete module: %d\n&quot;</span>, ret);&#125; </span><br><span class="line"><span class="keyword">else</span> &#123;printk(KERN_INFO <span class="string">&quot;Module removed\n&quot;</span>);&#125;</span><br></pre></td></tr></table></figure>
+
+<p>错误代码 <code>-14</code> 对应于 <code>EFAULT</code>，表示无效的内存地址</p>
+<p>在文件<code>./usr/include/asm-generic/errno-base.h</code>中有错误码1-34</p>
+<p><code>./usr/include/asm-generic/errno.h</code>有35-133</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> EFAULT          14      <span class="comment">/* Bad address */</span></span></span><br></pre></td></tr></table></figure>
+
+<p>rmmod是怎么通过<code>delete_module</code>实现的呢？</p>
+<p>rmmod是一个用户程序，通过系统调用调用<code>sys_delete_module</code></p>
+<p>而在内核中，很少去直接调用系统调用</p>
+<p> <a target="_blank" rel="noopener" href="https://linux.die.net/man/2/delete_module">delete_module(2): unload kernel module - Linux man page (die.net)</a> </p>
+<h4 id="尝试使用：call-usermodehelper"><a href="#尝试使用：call-usermodehelper" class="headerlink" title="尝试使用：call_usermodehelper"></a>尝试使用：call_usermodehelper</h4><p>内核模块调用用户程序</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">int</span> __init <span class="title function_">lkm_init</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">char</span> *envp[] = &#123;<span class="string">&quot;HOME=/tmp&quot;</span>, <span class="literal">NULL</span>&#125;;</span><br><span class="line">    <span class="type">char</span> *argv[] = &#123;<span class="string">&quot;/bin/sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="literal">NULL</span>&#125;;</span><br><span class="line">    <span class="type">char</span> *argvv[] = &#123;<span class="string">&quot;/bin/sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;/sbin/rmmod lkm&quot;</span>, <span class="literal">NULL</span>&#125;;</span><br><span class="line">   </span><br><span class="line">    printk(KERN_INFO <span class="string">&quot;Module loaded\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 延迟一段时间后卸载模块</span></span><br><span class="line">    ssleep(<span class="number">1</span>); <span class="comment">// 延迟1秒</span></span><br><span class="line">    printk(KERN_INFO <span class="string">&quot;Unloading module...\n&quot;</span>);</span><br><span class="line">    call_usermodehelper(argv[<span class="number">0</span>], argvv, envp, UMH_WAIT_EXEC);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="更改-kernel-module-c"><a href="#更改-kernel-module-c" class="headerlink" title="更改 kernel&#x2F;module.c"></a>更改 kernel&#x2F;module.c</h4><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/32413204/how-can-a-kernel-module-unload-itself-without-generating-errors-in-kernel-log">https://stackoverflow.com/questions/32413204/how-can-a-kernel-module-unload-itself-without-generating-errors-in-kernel-log</a></p>
+<h1 id="问题：隐藏后不能成功卸载"><a href="#问题：隐藏后不能成功卸载" class="headerlink" title="问题：隐藏后不能成功卸载"></a>问题：隐藏后不能成功卸载</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 删除模块的 list 和 kobject</span></span><br><span class="line">list_del_init(&amp;__this_module.<span class="built_in">list</span>);</span><br><span class="line">kobject_del(&amp;THIS_MODULE-&gt;mkobj.kobj);</span><br></pre></td></tr></table></figure>
+
+<h2 id="模块引用次数为-2且无法insmod同一个模块"><a href="#模块引用次数为-2且无法insmod同一个模块" class="headerlink" title="模块引用次数为-2且无法insmod同一个模块"></a>模块引用次数为-2且无法insmod同一个模块</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu:/kernel_lab# lsmod | grep lkm </span><br><span class="line">libkmod: ERROR ../libkmod/libkmod-module.c:1882 kmod_module_get_holders: could not open <span class="string">&#x27;/sys/module/lkm/holders&#x27;</span>: No such file or directory </span><br><span class="line">lkm 16384 -2</span><br></pre></td></tr></table></figure>
+
+<p>强制rmmod -f会导致内核模块整个出错</p>
+<h3 id="尝试恢复原文件，并没有解决-2问题"><a href="#尝试恢复原文件，并没有解决-2问题" class="headerlink" title="尝试恢复原文件，并没有解决-2问题"></a>尝试恢复原文件，并没有解决-2问题</h3><p> <a target="_blank" rel="noopener" href="https://unix.stackexchange.com/questions/394683/unhide-the-hidden-module-in-linux-kernel">Unhide the hidden module in linux kernel - Unix &amp; Linux Stack Exchange</a> </p>
+<p>正常lkm中有这些文件，只加节点的话没办法恢复</p>
+<p><img src="/../css/img/linux_kernel/1732417517047.png"></p>
+<p><img src="/../css/img/linux_kernel/1732422746808.png" alt="1732422746808"></p>
+<p>看下源码，init的时候怎么创建的，delete的时候怎么删除的</p>
+<p> <a target="_blank" rel="noopener" href="https://elixir.bootlin.com/linux/v4.16.11/source/lib/kobject.c#L565">kobject.c - lib&#x2F;kobject.c - Linux source code v4.16.11 - Bootlin Elixir Cross Referencer</a> </p>
+<p> <a target="_blank" rel="noopener" href="https://www.cnblogs.com/yangjunhe460/p/11851242.html">sysfs API总结 - yangjunhe - 博客园 (cnblogs.com)</a> </p>
+<p>存储刚开始lkm中的文件，删除后从存储内容恢复即可</p>
+<p><code>kobject_create_and_add</code> -&gt; 创建文件夹</p>
+<p><code>sysfs_create_file</code> -&gt; 创建文件</p>
+<p>现在输出变为如下，关于目录的报错解决了，但是引用次数的问题仍然存在</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu:/kernel_lab# lsmod | grep lkm </span><br><span class="line">lkm 16384 -2</span><br></pre></td></tr></table></figure>
+
+<p>直接在代码中<code>try_module_get(THIS_MODULE);</code> 是无效的</p>
+<h2 id="实现卸载"><a href="#实现卸载" class="headerlink" title="实现卸载"></a>实现卸载</h2><p>-2原因见下帖</p>
+<p><a target="_blank" rel="noopener" href="https://unix.stackexchange.com/questions/269500/lsmod-shows-2-in-the-used-by-column">https://unix.stackexchange.com/questions/269500/lsmod-shows-2-in-the-used-by-column</a></p>
+<blockquote>
+<p>For modules which aren’t unloaded, the corresponding file operation fails and sets <a target="_blank" rel="noopener" href="http://man7.org/linux/man-pages/man3/errno.3.html"><code>errno</code></a> to <code>ENOENT</code> (no such file or directory), which is 2 on Linux — and the <code>kmod_module_get_refcnt</code> negates that and returns it as the reference count. </p>
+</blockquote>
+<p>所以此时是已经把模块卸载了，删除重新添加的list即可？</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">int</span> __init <span class="title function_">lkm_init</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">char</span> *envp[] = &#123;<span class="string">&quot;HOME=/tmp&quot;</span>, <span class="literal">NULL</span>&#125;;</span><br><span class="line">    <span class="type">char</span> *argv[] = &#123;<span class="string">&quot;/bin/sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;/bin/cp /bin/sh&quot;</span>, <span class="literal">NULL</span>&#125;;</span><br><span class="line">    <span class="type">char</span> *argvv[] = &#123;<span class="string">&quot;/bin/sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;/sbin/rmmod lkm.ko&quot;</span>, <span class="literal">NULL</span>&#125;;</span><br><span class="line">    <span class="type">int</span> ret = <span class="number">1</span>;</span><br><span class="line">    <span class="comment">//save_module_attributes();</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> *<span class="title">list_temp</span> =</span> &amp;__this_module.<span class="built_in">list</span>;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">kobject</span> *<span class="title">kobj_temp</span> =</span> &amp;THIS_MODULE-&gt;mkobj.kobj;</span><br><span class="line"></span><br><span class="line">    save_module_attributes();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 删除模块的 list 和 kobject</span></span><br><span class="line">    list_del_init(&amp;__this_module.<span class="built_in">list</span>);</span><br><span class="line">    kobject_del(&amp;THIS_MODULE-&gt;mkobj.kobj);</span><br><span class="line"></span><br><span class="line">    restore_module(list_temp, kobj_temp);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 使用 call_usermodehelper 执行用户空间命令</span></span><br><span class="line">    ret = call_usermodehelper(argv[<span class="number">0</span>], argvv, envp, UMH_WAIT_EXEC);</span><br><span class="line">    <span class="keyword">if</span> (ret != <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        printk(KERN_ERR <span class="string">&quot;call_usermodehelper failed: %d\n&quot;</span>, ret);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        printk(KERN_INFO <span class="string">&quot;call_usermodehelper succeeded\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 删除模块的 list 和 kobject -&gt; 实现再次insmod</span></span><br><span class="line">    list_del_init(&amp;__this_module.<span class="built_in">list</span>);</span><br><span class="line">    kobject_del(&amp;THIS_MODULE-&gt;mkobj.kobj);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>是的！此时可以重新insmod，这是之前做不到的（insmod显示file exsit）</p>
+<h1 id="遗留问题"><a href="#遗留问题" class="headerlink" title="遗留问题"></a>遗留问题</h1><h2 id="dmesg中没有lkm-exit的输出"><a href="#dmesg中没有lkm-exit的输出" class="headerlink" title="dmesg中没有lkm_exit的输出"></a>dmesg中没有lkm_exit的输出</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">void</span> __exit <span class="title function_">lkm_exit</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    printk(KERN_INFO <span class="string">&quot;Module removed and cleaned up\n&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>猜测是删除模块的 list 和 kobject 之前就执行了 <code>rmmod</code> 命令，导致模块被卸载时，<code>lkm_exit</code> 函数还没有机会执行就被移除了 （只能执行一次）</p>
+<p>但是rmmod不是会执行程序的<code>lkm_exit</code> 函数吗？</p>
+<h2 id="保存文件太耗资源"><a href="#保存文件太耗资源" class="headerlink" title="保存文件太耗资源"></a>保存文件太耗资源</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//保存节点，恢复节点，无法再次insmod</span></span><br><span class="line"><span class="comment">//save_module_attributes();</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> *<span class="title">list_temp</span> =</span> &amp;__this_module.<span class="built_in">list</span>;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">kobject</span> *<span class="title">kobj_temp</span> =</span> &amp;THIS_MODULE-&gt;mkobj.kobj;</span><br><span class="line"><span class="comment">// 删除模块的 list 和 kobject</span></span><br><span class="line">list_del_init(&amp;__this_module.<span class="built_in">list</span>);</span><br><span class="line">kobject_del(&amp;THIS_MODULE-&gt;mkobj.kobj);</span><br><span class="line"></span><br><span class="line">restore_module(list_temp, kobj_temp);</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../css/img/linux_kernel/1732440039947.png" alt="1732440039947"></p>
+<p>只能通过一大段保存文件来实现吗？</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2024/11/23/Linux-Kernel_lab1/" data-id="cm3vf2pn40000tkuzapx64exg" data-title="【未解决】通过删除隐藏内核模块条目、kobject之后卸载模块" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux-Kernel-version-4-4-0/" rel="tag">Linux Kernel -version 4.4.0</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2024/11/23/Linux-Kernel/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">【未解决】通过删除隐藏内核模块条目、kobject之后卸载模块</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF-PWN/" rel="tag">CTF PWN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux-Kernel-version-4-4-0/" rel="tag">Linux Kernel -version 4.4.0</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CTF-PWN/" style="font-size: 20px;">CTF PWN</a> <a href="/tags/Linux-Kernel-version-4-4-0/" style="font-size: 10px;">Linux Kernel -version 4.4.0</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2024/11/23/Linux-Kernel_lab1/">【未解决】通过删除隐藏内核模块条目、kobject之后卸载模块</a>
+          </li>
+        
+          <li>
+            <a href="/2024/11/23/Linux-Kernel/">【未解决】通过删除隐藏内核模块条目、kobject之后卸载模块</a>
+          </li>
+        
+          <li>
+            <a href="/2024/11/14/w5/">2024 NewStar w5</a>
+          </li>
+        
+          <li>
+            <a href="/2024/11/13/w4/">2024 NewStar w4</a>
+          </li>
+        
+          <li>
+            <a href="/2024/11/12/w3/">2024 NewStar w3</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2024 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
