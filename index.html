@@ -114,7 +114,7 @@
 <h3 id="尝试恢复原文件，并没有解决-2问题"><a href="#尝试恢复原文件，并没有解决-2问题" class="headerlink" title="尝试恢复原文件，并没有解决-2问题"></a>尝试恢复原文件，并没有解决-2问题</h3><p> <a target="_blank" rel="noopener" href="https://unix.stackexchange.com/questions/394683/unhide-the-hidden-module-in-linux-kernel">Unhide the hidden module in linux kernel - Unix &amp; Linux Stack Exchange</a> </p>
 <p>正常lkm中有这些文件，只加节点的话没办法恢复</p>
 <p><img src="/../css/img/linux_kernel/1732417517047.png"></p>
-<p><img src="/../css/img/linux_kernel/1732422746808.png" alt="1732422746808"></p>
+<p><img src="/../css/img/linux_kernel/1732422746808.png"></p>
 <p>看下源码，init的时候怎么创建的，delete的时候怎么删除的</p>
 <p> <a target="_blank" rel="noopener" href="https://elixir.bootlin.com/linux/v4.16.11/source/lib/kobject.c#L565">kobject.c - lib&#x2F;kobject.c - Linux source code v4.16.11 - Bootlin Elixir Cross Referencer</a> </p>
 <p> <a target="_blank" rel="noopener" href="https://www.cnblogs.com/yangjunhe460/p/11851242.html">sysfs API总结 - yangjunhe - 博客园 (cnblogs.com)</a> </p>
@@ -140,13 +140,13 @@
 <p>但是rmmod不是会执行程序的<code>lkm_exit</code> 函数吗？</p>
 <h2 id="保存文件太耗资源"><a href="#保存文件太耗资源" class="headerlink" title="保存文件太耗资源"></a>保存文件太耗资源</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//保存节点，恢复节点，无法再次insmod</span></span><br><span class="line"><span class="comment">//save_module_attributes();</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> *<span class="title">list_temp</span> =</span> &amp;__this_module.<span class="built_in">list</span>;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">kobject</span> *<span class="title">kobj_temp</span> =</span> &amp;THIS_MODULE-&gt;mkobj.kobj;</span><br><span class="line"><span class="comment">// 删除模块的 list 和 kobject</span></span><br><span class="line">list_del_init(&amp;__this_module.<span class="built_in">list</span>);</span><br><span class="line">kobject_del(&amp;THIS_MODULE-&gt;mkobj.kobj);</span><br><span class="line"></span><br><span class="line">restore_module(list_temp, kobj_temp);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<p><img src="/../css/img/linux_kernel/1732440039947.png" alt="1732440039947"></p>
+<p><img src="/../css/img/linux_kernel/1732440039947.png"></p>
 <p>只能通过一大段保存文件来实现吗？</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2024/11/23/linux_kernel_lab1/" data-id="cm3vf9ubm00005kuz4c0q4hyx" data-title="【含遗留问题】通过删除隐藏内核模块条目、kobject之后卸载模块" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://example.com/2024/11/23/linux_kernel_lab1/" data-id="cm3vfg9ih0000f8uzbmwc75rn" data-title="【含遗留问题】通过删除隐藏内核模块条目、kobject之后卸载模块" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -262,7 +262,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2024/11/14/w5/" data-id="cm3oe7zmx0007nkuz331f8l3p" data-title="2024 NewStar w5" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://example.com/2024/11/14/w5/" data-id="cm3vfg9in0004f8uzcnvk0if1" data-title="2024 NewStar w5" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -496,7 +496,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2024/11/13/w4/" data-id="cm3oe7zmv0003nkuzgfg5c2mv" data-title="2024 NewStar w4" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://example.com/2024/11/13/w4/" data-id="cm3vfg9in0005f8uz8zeserl0" data-title="2024 NewStar w4" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -654,7 +654,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2024/11/12/w3/" data-id="cm3oe7zmx0006nkuzh2ald8uy" data-title="2024 NewStar w3" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://example.com/2024/11/12/w3/" data-id="cm3vfg9ip000ff8uzebvfelmd" data-title="2024 NewStar w3" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -794,7 +794,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2024/11/11/w2/" data-id="cm3oe7zmt0002nkuzdmmm07n7" data-title="2024 NewStar w2" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://example.com/2024/11/11/w2/" data-id="cm3vfg9im0003f8uz4ab67yhe" data-title="2024 NewStar w2" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -858,7 +858,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2024/11/10/w1/" data-id="cm3oe7zmn0000nkuzck7rgjli" data-title="2024 NewStar w1" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://example.com/2024/11/10/w1/" data-id="cm3vfg9ik0001f8uz3g5i269p" data-title="2024 NewStar w1" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
